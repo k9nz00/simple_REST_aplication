@@ -19,19 +19,24 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .authorizeRequests()
-                .mvcMatchers("/").permitAll()
-                .anyRequest().authenticated()
-                .and()
+                .authorizeRequests(a -> a
+                        .antMatchers("/", "/login**", "/error", "/js/**")
+                        .permitAll()
+                        .anyRequest()
+                        .authenticated()
+                )
+                .logout(l -> l
+                        .logoutSuccessUrl("/").permitAll()
+                )
                 .csrf().disable();
     }
 
     @Bean
-    public PrincipalExtractor principalExtractor(UserDetailsRepo userDetailsRepo){
+    public PrincipalExtractor principalExtractor(UserDetailsRepo userDetailsRepo) {
         return map -> {
 
             String id = (String) map.get("sub");
-            User user = userDetailsRepo.findById(id).orElseGet(()->{
+            User user = userDetailsRepo.findById(id).orElseGet(() -> {
                 User newUser = new User();
                 newUser.setId(id);
                 newUser.setName((String) map.get("name"));
