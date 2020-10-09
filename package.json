@@ -1,0 +1,27 @@
+{
+  "name": "semka-learn",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/k9nz00/simple_REST_aplication.git",
+  "author": "Andrey Semka <k9nz00@yandex.ru>",
+  "license": "MIT",
+  "scripts": {
+    "start": "webpack-dev-server",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "vue": "^2.6.12",
+    "vue-resource": "^1.5.1",
+    "vue-template-compiler": "^2.6.12"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.0.0",
+    "@babel/preset-env": "^7.0.0",
+    "babel-loader": "^8.0.1",
+    "vue-loader": "^15.4.1",
+    "vue-template-compiler": "^2.5.17",
+    "webpack": "^4.17.1",
+    "webpack-cli": "^3.1.0",
+    "webpack-dev-server": "^3.1.7"
+  }
+}
