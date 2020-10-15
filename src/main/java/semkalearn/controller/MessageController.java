@@ -3,6 +3,8 @@ package semkalearn.controller;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
 import semkalearn.domain.Message;
 import semkalearn.domain.Views;
@@ -54,5 +56,11 @@ public class MessageController {
     @DeleteMapping("{id}")
     public void delete(@PathVariable("id") Message message) {
         this.messageRepo.delete(message);
+    }
+
+    @MessageMapping("/changeMessage")
+    @SendTo("/topic/activity")
+    public Message message(Message message) {
+        return messageRepo.save(message);
     }
 }
