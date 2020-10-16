@@ -3,26 +3,29 @@ package semkalearn.controller;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
 import semkalearn.domain.Message;
 import semkalearn.domain.Views;
+import semkalearn.dto.EventType;
+import semkalearn.dto.ObjectType;
 import semkalearn.repo.MessageRepo;
+import semkalearn.util.WsSender;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.function.BiConsumer;
 
 @RestController
 @RequestMapping("message")
 public class MessageController {
 
-
     private final MessageRepo messageRepo;
+    private final BiConsumer<EventType, Message> wsSender;
 
     @Autowired
-    public MessageController(MessageRepo messageRepo) {
+    public MessageController(MessageRepo messageRepo, WsSender wsSender) {
         this.messageRepo = messageRepo;
+        this.wsSender = wsSender.getSender(ObjectType.MESSAGE, Views.Id.class);
     }
 
     @GetMapping
@@ -40,7 +43,9 @@ public class MessageController {
     @PostMapping
     public Message create(@RequestBody Message message) {
         message.setCreationDate(LocalDateTime.now());
-        return this.messageRepo.save(message);
+        Message updatedMessage = this.messageRepo.save(message);
+        this.wsSender.accept(EventType.CREATE, updatedMessage);
+        return updatedMessage;
     }
 
     @PutMapping("{id}")
@@ -50,17 +55,14 @@ public class MessageController {
 
         BeanUtils.copyProperties(message, messageFromDb, "id");
 
-        return this.messageRepo.save(messageFromDb);
+        Message updatedMessage = this.messageRepo.save(messageFromDb);
+        this.wsSender.accept(EventType.UPDATE, updatedMessage);
+        return updatedMessage;
     }
 
     @DeleteMapping("{id}")
     public void delete(@PathVariable("id") Message message) {
         this.messageRepo.delete(message);
-    }
-
-    @MessageMapping("/changeMessage")
-    @SendTo("/topic/activity")
-    public Message message(Message message) {
-        return messageRepo.save(message);
+        this.wsSender.accept(EventType.REMOVE, message);
     }
 }
