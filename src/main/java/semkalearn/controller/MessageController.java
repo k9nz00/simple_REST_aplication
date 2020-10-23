@@ -7,8 +7,10 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import semkalearn.domain.Message;
+import semkalearn.domain.User;
 import semkalearn.domain.Views;
 import semkalearn.dto.EventType;
 import semkalearn.dto.MetaDto;
@@ -55,9 +57,13 @@ public class MessageController {
     }
 
     @PostMapping
-    public Message create(@RequestBody Message message) throws IOException {
+    public Message create(
+            @RequestBody Message message,
+            @AuthenticationPrincipal User user
+    ) throws IOException {
         message.setCreationDate(LocalDateTime.now());
         fillMeta(message);
+        message.setAuthor(user);
         Message updatedMessage = this.messageRepo.save(message);
         this.wsSender.accept(EventType.CREATE, updatedMessage);
         return updatedMessage;
@@ -94,7 +100,7 @@ public class MessageController {
             if (matcher.find()) {
                 message.setLinkCover(url);
 
-            //обработка не ютубовских страниц
+                //обработка не ютубовских страниц
             } else if (!url.contains("youtu")) {
                 MetaDto meta = this.getMeta(url);
 
