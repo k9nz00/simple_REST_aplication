@@ -28,7 +28,7 @@
             }
         },
         methods: {
-            ...mapActions(['addMessage  Action', 'updateMessageAction']),
+            ...mapActions(['addMessageAction', 'updateMessageAction']),
             save() {
                 const message = {
                     id: this.id,
