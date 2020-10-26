@@ -40,10 +40,11 @@ public class MainController {
         HashMap<Object, Object> data = new HashMap<>();
 
         if (user != null) {
-
             data.put("profile", user);
             String messages = this.writer.writeValueAsString(messageRepo.findAll());
             model.addAttribute("messages", messages);
+        } else {
+            model.addAttribute("messages", "[]");
         }
 
         model.addAttribute("frontendData", data);

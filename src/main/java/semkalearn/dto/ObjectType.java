@@ -1,5 +1,5 @@
 package semkalearn.dto;
 
 public enum ObjectType {
-    MESSAGE
+    MESSAGE, COMMENT
 }
