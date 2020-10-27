@@ -14,7 +14,6 @@ import semkalearn.dto.MessagePageDto;
 import semkalearn.service.MessageService;
 
 import java.io.IOException;
-import java.util.List;
 
 @RestController
 @RequestMapping("message")
@@ -31,9 +30,10 @@ public class MessageController {
     @GetMapping
     @JsonView(Views.FullMessage.class)
     public MessagePageDto list(
-            @PageableDefault(size = MESSAGES_PER_PAGE   , sort = {"id"}, direction = Sort.Direction.DESC) Pageable pageable
+            @AuthenticationPrincipal User user,
+            @PageableDefault(size = MESSAGES_PER_PAGE, sort = { "id" }, direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        return this.messageService.findAll(pageable);
+        return messageService.findForUser(pageable, user);
     }
 
     @GetMapping("{id}")
