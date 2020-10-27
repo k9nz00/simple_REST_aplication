@@ -1,19 +1,19 @@
 <template>
-    <v-list-item>
-        <v-list-item-avatar>
-            <v-img :src="comment.author.userpic"></v-img>
-        </v-list-item-avatar>
-
-        <v-list-item-content>
-            <v-list-item-title>{{comment.text}}</v-list-item-title>
-            <v-list-item-subtitle>{{comment.author.name}}</v-list-item-subtitle>
-        </v-list-item-content>
-    </v-list-item>
+    <v-list-tile>
+        <user-link
+                :user="comment.author"
+        ></user-link>
+        <v-list-tile-content>
+            <v-list-tile-title>{{comment.text}}</v-list-tile-title>
+        </v-list-tile-content>
+    </v-list-tile>
 </template>
 
 <script>
+    import UserLink from 'components/UserLink.vue'
     export default {
         name: 'CommentItem',
+        components: {UserLink},
         props: ['comment']
     }
 </script>
